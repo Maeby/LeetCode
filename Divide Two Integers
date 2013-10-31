@@ -1,0 +1,38 @@
+/*
+ * Author: Maeby Peng, MaebyPeng@gmail.com
+ * Date: Oct 30, 2013
+ * Update: Oct 30, 2013
+ * Problem: Divide two integers
+ * Difficulty: Easy
+ *
+ * Notes:
+ * Divide two integers without using multiplication, division and mod operator. 
+ *
+ * Solution:
+ * Straight forward solution, by bit operation to simulate binary dividing. Align the 
+ * divisor to the highest posible position in dividend, then subtract it, repeat 
+ * this procedure until dividend is smaller than divisor.
+ */
+ 
+ int
+ divide_two_integers (int dividend, int divisor)
+ {
+    boolean neg = FALSE;     
+    int result = 0;
+    uint pos;
+     
+    if ((dividend < 0) ^ (divisor < 0)) neg = TRUE;
+    if (dividend < 0) dividend = -dividend;
+    if (divisor < 0) divisor = -divisor;
+    
+    while (dividend >= divisor) {
+        pos = 0;
+        /*
+         * Aligh divisor to the highest possible position in dividend
+         */
+        while (divisor << (pos + 1) <= dividend) pos++;
+        dividend -= (divisor << pos);
+        result |= (1 << pos);
+    }
+    return (neg ? -result : result);
+ }
