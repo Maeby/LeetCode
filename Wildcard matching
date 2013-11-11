@@ -1,0 +1,77 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+#define TRUE 1
+#define FALSE 0
+
+bool
+wildcard_matching (char *p, char *s)
+{
+    char *star_s = NULL;
+    char *star_p = NULL;
+
+    while (*s != 0) {
+        if (*p == *s || *p == '?') {
+            p++; s++;
+        } else if (*p == '*') {
+            while (*p == '*') {
+                p++; //skip all continuous '*'
+            }
+            if (*p == '\0') {
+                return (TRUE); //skip all continuous '*'
+            }
+            star_p = p;
+            star_s = s;
+        } else if (star_p != NULL) {
+            p = star_p; star_s++;
+            s = star_s;
+        } else {
+            break;
+        }
+    }
+
+    if (*s == '\0') {
+        if (*p == '\0') {
+            return (TRUE);
+        } else {
+            while (*p != '\0') {
+                if (*p != '*') {
+                    return (FALSE);
+                }
+                p++;
+            }
+            return (TRUE);
+        }
+    } else {
+        return (FALSE);
+    }
+}
+
+int
+main (void)
+{
+    bool rc;
+
+    rc = wildcard_matching("a", "aa");
+    printf("pattern a, string aa, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("aa", "aa");
+    printf("pattern aa, string aa, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("*", "aa");
+    printf("pattern *, string aa, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("a*", "aa");
+    printf("pattern a*, string aa, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("*a", "aa");
+    printf("pattern *a, string aa, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("?*", "aa");
+    printf("pattern ?*, string aa, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("c*a*b", "aab");
+    printf("pattern c*a*b, string aab, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("ab*c", "abcdc");
+    printf("pattern ab*c, string abcdc, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("ab*c**", "abcdc");
+    printf("pattern ab*c*, string abcdc, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("ab**c", "abcdc");
+    printf("pattern ab**c, string abcdc, match %s\n", rc ? "TRUE" : "FALSE");
+    rc = wildcard_matching("ab**cd", "abcdc");
+    printf("pattern ab**cd, string abcdc, match %s\n", rc ? "TRUE" : "FALSE");
+}
